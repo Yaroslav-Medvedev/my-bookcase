@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= book.title %></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main class="book-page">
+        <a class="back-link" href="/">← Back to books</a>
+        <% if (book.cover_id) { %>
+            <div class="detail-cover">
+                <img
+                    src="https://covers.openlibrary.org/b/id/<%= book.cover_id%>-M.jpg"
+                    alt="Cover of <%= book.title %>"
+                    width="120"
+                >
+            </div>
+        <% } else { %>
+            <p>No cover available.</p>
+        <% } %>
+        <h1><%= book.title %></h1>
+        <p>By <%= book.author %></p>
+        <p>ISBN: <%= book.isbn || "Not provided" %></p>
+        <p>Rating: <%= book.rating %></p>
+        <p>
+            Date read:
+            <%= book.date_read ? book.date_read.toLocaleDateString("en-GB")
+            : "Not provided" %>
+        </p>
+        <h2>Notes</h2>
+        <p style="white-space: pre-wrap;"><%= book.notes %></p>
+        <h2>Edit book</h2>
+        <form class="book-form" action="/books/<%= book.id %>/edit" method="POST">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title"
+                value="<%= book.title %>" required>
+            
+            <label for="author">Author</label>
+            <input type="text" id="author" name="author"
+                value="<%= book.author %>" required>
+
+            <label for="isbn">ISBN</label>
+            <input type="text" id="isbn" name="isbn"
+                value="<%= book.isbn || '' %>" maxlength="13">
+
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes"><%= book.notes || '' %></textarea>
+
+            <label for="rating">Rating (1-10)</label>
+            <input type="number" id="rating" name="rating"
+                value="<%= book.rating %>" min="1" max="10" required>
+            
+            <label for="date_read">Date read</label>
+            <input type="date" id="date_read" name="date_read"
+                value="<%= book.date_read ?  book.date_read.toLocaleDateString('sv-SE') : '' %>" required>
+
+            <button type="submit">Save changes</button>
+        </form>
+        <form class="delete-form" action="/books/<%= book.id %>/delete" method="POST"
+            onsubmit="return confirm('Delete this book?');">
+            <button type="submit">Delete book</button>
+        </form>   
+    </main>
+</body>
+</html>

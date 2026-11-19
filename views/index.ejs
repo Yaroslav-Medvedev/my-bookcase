@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Notes</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-name">My Bookcase</a>
+        <nav aria-label="Main navigation">
+            <a class="add-book-link" href="#add-book">+ Add book</a>
+        </nav>
+    </header>
+    <section class="intro">
+        <h1>A personal library.</h1>
+        <p>Books read. Ideas kept.</p>
+    </section>
+    <div class="library-toolbar">
+        <p><%=String(books.length).padStart(2,"0")%> BOOKS</p>
+        <form action="/" method="GET">
+            <label for="sort">Sort by</label>
+            <select id="sort" name="sort" onchange="this.form.submit()">
+                <option value="recency" <%= sort === "recency" ? "selected" : ""%>>
+                    Recently read
+                </option>
+                <option value="rating" <%= sort === "rating" ? "selected" : ""%>>
+                    Highest rating
+                </option>
+                <option value="title" <%= sort === "title" ? "selected" : ""%>>
+                    Title A-Z
+                </option>
+            </select>
+        </form>
+    </div>
+    <div class="book-grid">
+        <% books.forEach((book) => { %>
+            <article class="book-card">
+                <a class="book-cover" href="/books/<%=book.id%>">
+                    <% if (book.cover_id) { %>
+                        <img
+                            src="https://covers.openlibrary.org/b/id/<%= book.cover_id%>-L.jpg"
+                            alt="Cover of <%= book.title %>"
+                            width="120"
+                        >
+                    <% } else { %>
+                        <p>No cover available.</p>
+                    <% } %>
+                </a>
+                <div class="book-heading">
+                    <h2>
+                        <a href="/books/<%=book.id%>"><%=book.title%></a>
+                    </h2>
+                    <p class="book-rating">
+                        <%= book.rating %><span> /10</span>
+                    </p>
+                </div>
+                <p class="book-author"><%= book.author %></p>
+                <p class="book-date">
+                    <%= book.date_read
+                        ? "Read in " + book.date_read.toLocaleDateString("en-GB", {
+                            month: "long",
+                            year: "numeric"
+                        })
+                        : "Read date not provided" %>
+                </p>
+            </article>
+        <% }); %>
+    </div>
+    <h2>Add a book</h2>
+    <form id="add-book" class="book-form" action="/add-book" method="POST">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required>
+        <label for="author">Author</label>
+        <input type="text" id="author" name="author" required>
+        <label for="isbn">ISBN</label>
+        <input type="text" id="isbn" name="isbn" maxlength="13">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="5" required></textarea>
+        <label for="rating">Rating (1-10)</label>
+        <input type="number" id="rating" name="rating" min="1" max="10" required>
+        <label for="date_read">Date read</label>
+        <input type="date" id="date_read" name="date_read" required>
+        <button type="submit">Save book</button>
+    </form>
+    <footer class="site-footer">
+        <p>A record of what stays with you.</p>
+        <p><%= new Date().getFullYear() %></p>
+    </footer>
+</body>
+</html>
